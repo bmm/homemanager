@@ -1,0 +1,72 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'finance/style.css' %}" />
+
+<ul>
+{% for quote in quotes %}
+<li>{{ quote.product.name }} - {{ quote.price }} - {{ quote.last_update }}</li>
+{% endfor %}
+</ul>
+
+<div class="centered">
+  <table> 
+    <tbody>
+    <tr>
+      <th colspan="5">{% trans "Overall" %}</th>
+    </tr>
+    <tr>
+      <th>{% trans "Product" %}</th>
+      <th>{% trans "Price (€)" %}</th>
+      <th>{% trans "Quantity" %}</th>
+      <th>{% trans "Date" %}</th>
+      <th>{% trans "Time" %}</th>
+    </tr>
+    <tr>
+      <td>Shiitake</td>
+      <td>6.25</td>
+      <td>10</td>
+      <td>2014.07.17</td>
+      <td>20:38:03</td>
+    </tr>
+    <tr>
+      <td>Pleurotus</td>
+      <td>4.75</td>
+      <td>25</td>
+      <td>2014.07.17</td>
+      <td>20:38:03</td>
+    </tr>
+    </tbody>
+  </table>
+ 
+  <br />  
+
+  <table>
+    <tbody>
+    <tr>
+      <th colspan="5">{% trans "Trades" %}</th>
+    </tr>
+    <tr>
+      <th>{% trans "Id" %}</th>
+      <th>{% trans "Price (€)" %}</th>
+      <th>{% trans "Quantity" %}</th>
+      <th>{% trans "Date" %}</th>
+      <th>{% trans "Time" %}</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>6.25</td>
+      <td>13</td>
+      <td>2014.07.17</td>
+      <td>20:38:03</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>4.75</td>
+      <td>25</td>
+      <td>2014.07.17</td>
+      <td>20:38:03</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
