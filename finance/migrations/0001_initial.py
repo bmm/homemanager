@@ -8,39 +8,140 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Provider'
-        db.create_table(u'finance_provider', (
+        # Adding model 'Entidade'
+        db.create_table(u'finance_entidade', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('nome', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('nif', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('morada', self.gf('django.db.models.fields.CharField')(max_length=200)),
         ))
-        db.send_create_signal(u'finance', ['Provider'])
+        db.send_create_signal(u'finance', ['Entidade'])
 
-        # Adding model 'Transaction'
-        db.create_table(u'finance_transaction', (
+        # Adding model 'Fatura'
+        db.create_table(u'finance_fatura', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=200)),
+            ('entidade', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['finance.Entidade'])),
+            ('data', self.gf('django.db.models.fields.DateField')()),
         ))
-        db.send_create_signal(u'finance', ['Transaction'])
+        db.send_create_signal(u'finance', ['Fatura'])
+
+        # Adding model 'LinhaFatura'
+        db.create_table(u'finance_linhafatura', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('fatura', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['finance.Fatura'])),
+            ('iva', self.gf('django.db.models.fields.FloatField')(default=0)),
+            ('valor', self.gf('django.db.models.fields.FloatField')(default=0)),
+        ))
+        db.send_create_signal(u'finance', ['LinhaFatura'])
+
+        # Adding model 'Despesa'
+        db.create_table(u'finance_despesa', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('data', self.gf('django.db.models.fields.DateField')()),
+            ('descricao', self.gf('django.db.models.fields.CharField')(max_length=200)),
+            ('pago', self.gf('django.db.models.fields.BooleanField')()),
+        ))
+        db.send_create_signal(u'finance', ['Despesa'])
+
+        # Adding model 'ContaBancaria'
+        db.create_table(u'finance_contabancaria', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('banco', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['finance.Entidade'])),
+            ('nome', self.gf('django.db.models.fields.CharField')(max_length=50)),
+        ))
+        db.send_create_signal(u'finance', ['ContaBancaria'])
+
+        # Adding model 'MovimentoBancario'
+        db.create_table(u'finance_movimentobancario', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('conta', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['finance.ContaBancaria'])),
+            ('data_valor', self.gf('django.db.models.fields.DateField')()),
+            ('data_movimento', self.gf('django.db.models.fields.DateField')()),
+            ('descricao', self.gf('django.db.models.fields.CharField')(max_length=200)),
+            ('montante', self.gf('django.db.models.fields.FloatField')(default=0)),
+        ))
+        db.send_create_signal(u'finance', ['MovimentoBancario'])
+
+        # Adding model 'Receita'
+        db.create_table(u'finance_receita', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('entidade', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['finance.Entidade'])),
+            ('valor', self.gf('django.db.models.fields.FloatField')(default=0)),
+        ))
+        db.send_create_signal(u'finance', ['Receita'])
 
 
     def backwards(self, orm):
-        # Deleting model 'Provider'
-        db.delete_table(u'finance_provider')
+        # Deleting model 'Entidade'
+        db.delete_table(u'finance_entidade')
 
-        # Deleting model 'Transaction'
-        db.delete_table(u'finance_transaction')
+        # Deleting model 'Fatura'
+        db.delete_table(u'finance_fatura')
+
+        # Deleting model 'LinhaFatura'
+        db.delete_table(u'finance_linhafatura')
+
+        # Deleting model 'Despesa'
+        db.delete_table(u'finance_despesa')
+
+        # Deleting model 'ContaBancaria'
+        db.delete_table(u'finance_contabancaria')
+
+        # Deleting model 'MovimentoBancario'
+        db.delete_table(u'finance_movimentobancario')
+
+        # Deleting model 'Receita'
+        db.delete_table(u'finance_receita')
 
 
     models = {
-        u'finance.provider': {
-            'Meta': {'object_name': 'Provider'},
+        u'finance.contabancaria': {
+            'Meta': {'object_name': 'ContaBancaria'},
+            'banco': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['finance.Entidade']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+            'nome': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
-        u'finance.transaction': {
-            'Meta': {'object_name': 'Transaction'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+        u'finance.despesa': {
+            'Meta': {'object_name': 'Despesa'},
+            'data': ('django.db.models.fields.DateField', [], {}),
+            'descricao': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'pago': ('django.db.models.fields.BooleanField', [], {})
+        },
+        u'finance.entidade': {
+            'Meta': {'object_name': 'Entidade'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'morada': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'nif': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'nome': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        u'finance.fatura': {
+            'Meta': {'object_name': 'Fatura'},
+            'data': ('django.db.models.fields.DateField', [], {}),
+            'entidade': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['finance.Entidade']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        },
+        u'finance.linhafatura': {
+            'Meta': {'object_name': 'LinhaFatura'},
+            'fatura': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['finance.Fatura']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'iva': ('django.db.models.fields.FloatField', [], {'default': '0'}),
+            'valor': ('django.db.models.fields.FloatField', [], {'default': '0'})
+        },
+        u'finance.movimentobancario': {
+            'Meta': {'object_name': 'MovimentoBancario'},
+            'conta': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['finance.ContaBancaria']"}),
+            'data_movimento': ('django.db.models.fields.DateField', [], {}),
+            'data_valor': ('django.db.models.fields.DateField', [], {}),
+            'descricao': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'montante': ('django.db.models.fields.FloatField', [], {'default': '0'})
+        },
+        u'finance.receita': {
+            'Meta': {'object_name': 'Receita'},
+            'entidade': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['finance.Entidade']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'valor': ('django.db.models.fields.FloatField', [], {'default': '0'})
         }
     }
 
